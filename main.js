@@ -95,5 +95,5 @@ function fillCanvasWithText(canvas, text) {
 
 function wordIterator(word) {
   let i = 0;
-  return () => word[i++ % word.length];
+  return () => word[i >= word.length ? (i = 0) : i++];
 }
