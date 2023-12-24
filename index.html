@@ -1,12 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy new year</title>
+    <style>
+        #github {
+            position: absolute;
+            display: block;
+            top: 4em;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: transparent;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        #github img {
+            width: 2em;
+            height: 2em;
+        }
+    </style>
 </head>
+
 <body>
     <canvas id="canvas"></canvas>
+    <a href="https://github.com/hafizhuseynov/new-year-tree" target="_blank" id="github">
+        <img src="./github-mark-white.png" alt="Github">
+    </a>
     <script src="./main.js"></script>
 </body>
+
 </html>
