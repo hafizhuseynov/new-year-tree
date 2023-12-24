@@ -17,7 +17,7 @@ const colors = [
   "hsl(207, 69%, 73%)",
   "hsl(215, 67%, 75%)",
   "hsl(291, 50%, 75%)",
-  "hsl(304, 51%, 78%)"
+  "hsl(304, 51%, 78%)",
 ];
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -44,21 +44,26 @@ function fillCanvasWithText(canvas, text) {
   canvas.height = window.innerHeight;
 
   const next = wordIterator(text);
-
-  const fontSize = parseInt(
-    window.getComputedStyle(document.documentElement).fontSize
+  const { fontSize, fontFamily } = window.getComputedStyle(
+    document.documentElement
   );
 
-  ctx.font = fontSize + 'px "Courier New"';
+  const fontSizeParsed = parseInt(fontSize);
+
+  ctx.font = fontSizeParsed + "px" + " " + fontFamily;
 
   let x = 0;
-  let y = fontSize * 1.2;
-  const lineHeight = fontSize * 1.2;
+  let y = fontSizeParsed;
+  const lineHeight = fontSizeParsed * 1.2;
+
+  // Random color for line
   let color = colors[Math.floor(Math.random() * colors.length)];
 
   while (y < canvas.height) {
     let letter = next();
     let currentLine = Math.round(y / lineHeight);
+
+    // Triangle coordinates
     let triangleHeight = Math.min(canvas.width / lineHeight / 1.2, 40);
     let triangleStart = 5;
     let triangleEnd = triangleStart + triangleHeight;
@@ -66,17 +71,20 @@ function fillCanvasWithText(canvas, text) {
     const isHeightMatch =
       currentLine >= triangleStart && currentLine <= triangleEnd;
 
+    // to left and to right from center
+    const widthOffset = ((currentLine - triangleStart) * lineHeight) / 2;
+
     const isWidthMatch =
-      x >=
-        canvas.width / 2 - ((currentLine - triangleStart) * lineHeight) / 2 &&
-      x <= canvas.width / 2 + ((currentLine - triangleStart) * lineHeight) / 2;
-  
+      x >= canvas.width / 2 - widthOffset &&
+      x <= canvas.width / 2 + widthOffset;
+
     ctx.fillStyle = isHeightMatch && isWidthMatch ? color : "rgb(130, 100, 90)";
     ctx.fillText(letter, x, y);
-    
+
     const letterWidth = ctx.measureText(letter).width;
     x += letterWidth;
 
+    // go to next line, if there is not enought space
     if (x + letterWidth > canvas.width) {
       color = colors[Math.floor(Math.random() * colors.length)];
       x = 0;
