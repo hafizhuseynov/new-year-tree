@@ -7,18 +7,6 @@ if (textParam) {
   text = String(textParam).replace(/[^a-zA-Z]+/g, "") || "*";
 }
 
-const colors = [
-  "hsl(101, 69%, 88%)",
-  "hsl(236, 64%, 78%)",
-  "hsl(338, 68%, 84%)",
-  "hsl(360, 53%, 80%)",
-  "hsl(85, 56%, 81%)",
-  "hsl(205, 60%, 82%)",
-  "hsl(207, 69%, 73%)",
-  "hsl(215, 67%, 75%)",
-  "hsl(291, 50%, 75%)",
-  "hsl(304, 51%, 78%)",
-];
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -31,12 +19,46 @@ document.addEventListener("DOMContentLoaded", function () {
   canvas.style.backgroundColor = "#000066";
   canvas.style.display = "block";
 
-  fillCanvasWithText(canvas, text);
-  window.onresize = () => fillCanvasWithText(canvas, text);
-  setInterval(() => fillCanvasWithText(canvas, text), 500);
+  // fillCanvasWithText(canvas, text);
+  // window.onresize = () => fillCanvasWithText(canvas, text);
+  // setInterval(() => fillCanvasWithText(canvas, text), 500);
+
+  
+let lastColorChangeTime = 0;
+
+let colors = [
+  "hsl(101, 69%, 88%)",
+  "hsl(236, 64%, 78%)",
+  "hsl(338, 68%, 84%)",
+  "hsl(186, 100%, 50%)",
+  "hsl(0, 100%, 50%)",
+  "hsl(113, 100%, 50%)",
+  "hsl(63, 50%, 50%)",
+  "hsl(215, 67%, 75%)",
+  "hsl(291, 50%, 75%)",
+  "hsl(304, 51%, 78%)",
+];
+
+
+function animate(timestamp) {
+  if (!lastColorChangeTime) lastColorChangeTime = timestamp;
+  
+  const elapsedTime = timestamp - lastColorChangeTime;
+  
+  if (elapsedTime > 300) {
+    // reorder colors clockwise
+    colors = colors.slice(-1).concat(colors.slice(0, -1));
+    lastColorChangeTime = timestamp;
+  }
+
+  fillCanvasWithText(canvas, text, colors);
+  requestAnimationFrame(animate);
+}
+
+animate()
 });
 
-function fillCanvasWithText(canvas, text) {
+function fillCanvasWithText(canvas, text, colors) {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -57,7 +79,7 @@ function fillCanvasWithText(canvas, text) {
   const lineHeight = fontSizeParsed * 1.2;
 
   // Random color for line
-  let color = colors[Math.floor(Math.random() * colors.length)];
+  // let color = colors[Math.floor(Math.random() * colors.length)];
 
   while (y < canvas.height) {
     let letter = next();
@@ -78,7 +100,9 @@ function fillCanvasWithText(canvas, text) {
       x >= canvas.width / 2 - widthOffset &&
       x <= canvas.width / 2 + widthOffset;
 
-    ctx.fillStyle = isHeightMatch && isWidthMatch ? color : "rgb(130, 100, 90)";
+    ctx.fillStyle = isHeightMatch && isWidthMatch ? colors[
+      currentLine % colors.length
+    ] : "rgb(130, 100, 90)";
     ctx.fillText(letter, x, y);
 
     const letterWidth = ctx.measureText(letter).width;
@@ -86,12 +110,13 @@ function fillCanvasWithText(canvas, text) {
 
     // go to next line, if there is not enought space
     if (x + letterWidth > canvas.width) {
-      color = colors[Math.floor(Math.random() * colors.length)];
+      // color = colors[Math.floor(Math.random() * colors.length)];
       x = 0;
       y += lineHeight;
     }
   }
 }
+
 
 function wordIterator(word) {
   let i = 0;
