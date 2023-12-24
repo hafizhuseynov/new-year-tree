@@ -8,16 +8,16 @@ if (textParam) {
 }
 
 const colors = [
-  "#FFB6C1",
-  "#ADD8E6",
-  "#E0FFFF",
-  "#D3D3D3",
-  "#FAFAD2",
-  "#90EE90",
-  "#FFB3DE",
-  "#FFDAB9",
-  "#FFFFE0",
-  "#B0E0E6",
+  "hsl(101, 69%, 88%)",
+  "hsl(236, 64%, 78%)",
+  "hsl(338, 68%, 84%)",
+  "hsl(360, 53%, 80%)",
+  "hsl(85, 56%, 81%)",
+  "hsl(205, 60%, 82%)",
+  "hsl(207, 69%, 73%)",
+  "hsl(215, 67%, 75%)",
+  "hsl(291, 50%, 75%)",
+  "hsl(304, 51%, 78%)"
 ];
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.body.style.padding = "0";
 
   const canvas = document.getElementById("canvas");
-  canvas.style.backgroundColor = "rgb(86, 14, 255)";
+  canvas.style.backgroundColor = "#000066";
   canvas.style.display = "block";
 
   fillCanvasWithText(canvas, text);
@@ -55,6 +55,7 @@ function fillCanvasWithText(canvas, text) {
   let y = fontSize * 1.2;
   const lineHeight = fontSize * 1.2;
   let color = colors[Math.floor(Math.random() * colors.length)];
+
   while (y < canvas.height) {
     let letter = next();
     let currentLine = Math.round(y / lineHeight);
@@ -69,15 +70,10 @@ function fillCanvasWithText(canvas, text) {
       x >=
         canvas.width / 2 - ((currentLine - triangleStart) * lineHeight) / 2 &&
       x <= canvas.width / 2 + ((currentLine - triangleStart) * lineHeight) / 2;
-
-    if (isHeightMatch && isWidthMatch) {
-      ctx.fillStyle = color;
-      ctx.fillText(letter, x, y);
-    } else {
-      ctx.fillStyle = "rgb(130, 100, 90)";
-      ctx.fillText(letter, x, y);
-    }
-
+  
+    ctx.fillStyle = isHeightMatch && isWidthMatch ? color : "rgb(130, 100, 90)";
+    ctx.fillText(letter, x, y);
+    
     const letterWidth = ctx.measureText(letter).width;
     x += letterWidth;
 
