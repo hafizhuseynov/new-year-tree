@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById("canvas");
   const ctx = canvas.getContext("2d");
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
   canvas.style.backgroundColor = "#000066";
   canvas.style.display = "block";
 
@@ -28,101 +26,88 @@ document.addEventListener("DOMContentLoaded", function () {
     "hsl(304, 51%, 78%)",
   ];
 
-  const { fontSize, fontFamily } = window.getComputedStyle(
-    document.documentElement
-  );
-
+  let lineHeight = 0;
   let lastColorChangeTime = 0;
 
-  function animate(timestamp) {
+  function animateCanvas(timestamp) {
     if (!lastColorChangeTime) lastColorChangeTime = timestamp;
 
     const elapsedTime = timestamp - lastColorChangeTime;
 
-    if (elapsedTime > 300) {
+    if (elapsedTime > 100) {
       // reorder colors clockwise
       colors = colors.slice(-1).concat(colors.slice(0, -1));
       lastColorChangeTime = timestamp;
     }
 
-    fillCanvasWithText(
-      ctx,
-      canvas.width,
-      canvas.height,
-      text,
-      colors,
-      fontSize,
-      fontFamily
+    fillCanvasWithText(canvas.width, canvas.height);
+
+    requestAnimationFrame(animateCanvas);
+  }
+
+  // Update canvas onload and on resize only
+  function updateCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const { fontSize, fontFamily } = window.getComputedStyle(
+      document.documentElement
     );
 
-    requestAnimationFrame(animate);
+    ctx.font = fontSize + " " + fontFamily;
+    lineHeight = parseInt(fontSize) * 1.2;
   }
 
-  window.onresize = handleResize;
-  animate();
-});
+  // Animation loop
+  function fillCanvasWithText() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-function handleResize() {
-  const canvas = document.getElementById("canvas");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+    const next = wordIterator(text);
 
-function fillCanvasWithText(
-  ctx,
-  width,
-  height,
-  text,
-  colors,
-  fontSize,
-  fontFamily
-) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let x = 0;
+    let y = lineHeight;
 
-  const next = wordIterator(text);
-  const fontSizeParsed = parseInt(fontSize);
+    while (y < canvas.height) {
+      let letter = next();
+      let currentLine = Math.round(y / lineHeight);
 
-  ctx.font = fontSizeParsed + "px" + " " + fontFamily;
+      // Triangle coordinates
+      let triangleHeight = Math.min(canvas.width / lineHeight / 1.2, 40);
+      let triangleStart = 5;
+      let triangleEnd = triangleStart + triangleHeight;
 
-  let x = 0;
-  let y = fontSizeParsed;
-  const lineHeight = fontSizeParsed * 1.2;
+      const isHeightMatch =
+        currentLine >= triangleStart && currentLine <= triangleEnd;
 
-  while (y < height) {
-    let letter = next();
-    let currentLine = Math.round(y / lineHeight);
+      // to left and to right from center
+      const widthOffset = ((currentLine - triangleStart) * lineHeight) / 2;
 
-    // Triangle coordinates
-    let triangleHeight = Math.min(width / lineHeight / 1.2, 40);
-    let triangleStart = 5;
-    let triangleEnd = triangleStart + triangleHeight;
+      const isWidthMatch =
+        x >= canvas.width / 2 - widthOffset &&
+        x <= canvas.width / 2 + widthOffset;
 
-    const isHeightMatch =
-      currentLine >= triangleStart && currentLine <= triangleEnd;
+      ctx.fillStyle =
+        isHeightMatch && isWidthMatch
+          ? colors[currentLine % colors.length]
+          : "rgb(130, 100, 90)";
+      ctx.fillText(letter, x, y);
 
-    // to left and to right from center
-    const widthOffset = ((currentLine - triangleStart) * lineHeight) / 2;
+      const letterWidth = ctx.measureText(letter).width;
+      x += letterWidth;
 
-    const isWidthMatch =
-      x >= width / 2 - widthOffset && x <= width / 2 + widthOffset;
-
-    ctx.fillStyle =
-      isHeightMatch && isWidthMatch
-        ? colors[currentLine % colors.length]
-        : "rgb(130, 100, 90)";
-    ctx.fillText(letter, x, y);
-
-    const letterWidth = ctx.measureText(letter).width;
-    x += letterWidth;
-
-    // go to next line, if there is not enought space
-    if (x + letterWidth > width) {
-      // color = colors[Math.floor(Math.random() * colors.length)];
-      x = 0;
-      y += lineHeight;
+      // go to next line, if there is not enought space
+      if (x + letterWidth > canvas.width) {
+        // color = colors[Math.floor(Math.random() * colors.length)];
+        x = 0;
+        y += lineHeight;
+      }
     }
   }
-}
+
+  updateCanvas();
+  animateCanvas();
+  window.onresize = updateCanvas;
+});
 
 function wordIterator(word) {
   let i = 0;
