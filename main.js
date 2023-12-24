@@ -1,4 +1,11 @@
-const text = "HAPPYNEWYEAR";
+let text = "HAPPYNEWYEAR";
+
+const urlParams = new URLSearchParams(window.location.search);
+const textParam = urlParams.get("text");
+
+if (textParam) {
+  text = String(textParam).replace(/[^a-zA-Z]+/g, "") || "*";
+}
 
 const colors = [
   "#FFB6C1",
@@ -14,6 +21,9 @@ const colors = [
 ];
 
 document.addEventListener("DOMContentLoaded", function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  text = urlParams.get("text") || text;
+
   document.body.style.margin = "0";
   document.body.style.padding = "0";
 
