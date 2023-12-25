@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       ctx.fillStyle =
         isHeightMatch && isWidthMatch
-          ? "white"
+          ? colors[currentLine % colors.length]
           : "rgb(130, 100, 90)";
       ctx.fillText(letter, x, y);
 
