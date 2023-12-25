@@ -1,4 +1,4 @@
-let text = "HAPPYNEWYEAR";
+let text = "YENIIL";
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       ctx.fillStyle =
         isHeightMatch && isWidthMatch
-          ? colors[currentLine % colors.length]
+          ? "white"
           : "rgb(130, 100, 90)";
       ctx.fillText(letter, x, y);
 
@@ -111,5 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function wordIterator(word) {
   let i = 0;
-  return () => word[i >= word.length ? (i = 0) : i++];
+  return () => {
+    if (i >= word.length) i = 0;
+    return word[i++];
+  }
 }
