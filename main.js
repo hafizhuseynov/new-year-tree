@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   let lineHeight = 0;
+  let letterWidth = 0;
   let lastColorChangeTime = 0;
 
   function animateCanvas(timestamp) {
@@ -56,6 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     ctx.font = fontSize + " " + fontFamily;
     lineHeight = parseInt(fontSize) * 1.2;
+    letterWidth = ctx.measureText("A").width
   }
 
   // Animation loop
@@ -79,20 +81,17 @@ document.addEventListener("DOMContentLoaded", function () {
       const isHeightMatch =
         currentLine >= triangleStart && currentLine <= triangleEnd;
 
-      // to left and to right from center
-      const widthOffset = ((currentLine - triangleStart) * lineHeight) / 2;
-
       const isWidthMatch =
-        x >= canvas.width / 2 - widthOffset &&
-        x <= canvas.width / 2 + widthOffset;
+        x + letterWidth * (currentLine - triangleStart) > canvas.width / 2 &&
+        x - letterWidth * (currentLine - triangleStart) < canvas.width / 2;
 
       ctx.fillStyle =
         isHeightMatch && isWidthMatch
           ? colors[currentLine % colors.length]
-          : "rgb(130, 100, 90)";
+          : "rgb(90, 90, 90)";
+
       ctx.fillText(letter, x, y);
 
-      const letterWidth = ctx.measureText(letter).width;
       x += letterWidth;
 
       // go to next line, if there is not enought space
