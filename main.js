@@ -54,14 +54,17 @@ document.addEventListener("DOMContentLoaded", function () {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
+    // Scale canvas for high DPI devices
     setupHighDPI(canvas);
+
     const { fontSize, fontFamily } = window.getComputedStyle(
       document.documentElement
     );
 
     ctx.font = "bold " + fontSize + " " + fontFamily;
+
     lineHeight = parseInt(fontSize) * 1.2;
-    letterWidth = ctx.measureText("A").width;
+    letterWidth = ctx.measureText("A").width; // assuming monospace font, all letters have the same width
     canvasWidth = parseInt(canvas.style.width);
     canvasHeight = parseInt(canvas.style.height);
   }
@@ -80,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let currentLine = Math.round(y / lineHeight);
 
       // Triangle coordinates
-      let triangleHeight = Math.min(canvasWidth / lineHeight / 1.2, 40);
+      let triangleHeight = Math.min(canvasWidth / lineHeight / 1.2, 40); // 40 is max triangle height, and changes based on screen size
       let triangleStart = 5;
       let triangleEnd = triangleStart + triangleHeight;
 
@@ -99,10 +102,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.fillText(letter, x, y);
 
       x += letterWidth;
-
       // go to next line, if there is not enought space
       if (x + letterWidth > canvasWidth) {
-        // color = colors[Math.floor(Math.random() * colors.length)];
         x = 0;
         y += lineHeight;
       }
