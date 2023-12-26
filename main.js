@@ -33,6 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
   let letterWidth = 0;
   let lastColorChangeTime = 0;
 
+  // Triangle coordinates
+  let triangleHeight = Math.min(canvasWidth / lineHeight / 1.2, 40); // 40 is max triangle height, and changes based on screen size
+  let triangleStart = 5;
+  let triangleEnd = triangleStart + triangleHeight;
+
   function animateCanvas(timestamp) {
     if (!lastColorChangeTime) lastColorChangeTime = timestamp;
 
@@ -65,27 +70,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     lineHeight = parseInt(fontSize) * 1.2;
     letterWidth = ctx.measureText("A").width; // assuming monospace font, all letters have the same width
-    canvasWidth = parseInt(canvas.style.width);
-    canvasHeight = parseInt(canvas.style.height);
+    canvasWidth = parseInt(canvas.style.width); // using style.width instead of width, because of high DPI scaling
+    canvasHeight = parseInt(canvas.style.height); // using style.height instead of height, because of high DPI scaling
+
+    // Triangle coordinates
+    triangleHeight = Math.min(canvasWidth / lineHeight / 1.2, 40); // 40 is max triangle height, and changes based on screen size
+    triangleStart = 5;
+    triangleEnd = triangleStart + triangleHeight;
   }
 
   // Animation loop
   function fillCanvasWithText() {
-    ctx.clearRect(0, 0, canvasWidth, parseInt(canvas.style.height));
+    ctx.clearRect(0, 0, canvasWidth, parseInt(canvasHeight));
 
     const next = wordIterator(text);
 
     let x = 0;
     let y = lineHeight;
 
-    while (y < parseInt(canvas.style.height)) {
+    while (y < parseInt(canvasHeight)) {
       let letter = next();
       let currentLine = Math.round(y / lineHeight);
-
-      // Triangle coordinates
-      let triangleHeight = Math.min(canvasWidth / lineHeight / 1.2, 40); // 40 is max triangle height, and changes based on screen size
-      let triangleStart = 5;
-      let triangleEnd = triangleStart + triangleHeight;
 
       const isHeightMatch =
         currentLine >= triangleStart && currentLine <= triangleEnd;
@@ -136,7 +141,7 @@ function setupHighDPI(canvas) {
     1;
 
   let ratio = dpr / bsr;
-
+  console.log(ratio);
   let oldWidth = canvas.width;
   let oldHeight = canvas.height;
 
